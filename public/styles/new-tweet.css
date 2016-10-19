@@ -24,15 +24,14 @@ section span.counter {
   padding-right: 20px;
 }
 
-#createdTweets {
+section.createdTweets {
   margin: 2em;
   background-color: white;
   border: 1px solid black;
-  /*height: 200px;*/
   border-radius: 10px;
 
 }
-img.logo {
+header img.logo {
   padding-left: 5px;
   width: 80px;
   height: 80px;
@@ -48,7 +47,8 @@ article header h5 {
 article header {
   background-color: #afceff;
   height: 80px;
-  width: 100%
+  width: 100%;
+  border-radius: 10px 10px 0 0;
 
 }
 article footer {
@@ -66,7 +66,7 @@ article p {
   float: right;
   visibility: hidden;
 }
-article:hover.glyphicon {
+article:hover .glyphicon {
   color: blue;
   visibility: visible;
 }
