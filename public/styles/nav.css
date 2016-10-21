@@ -6,6 +6,8 @@
   background-color: #00a087;
   color: #e8fdff;
   padding: 0em 2em;
+  padding-right: 150px;
+  padding-top: 7px;
 }
 #nav-bar .logo {
   width: 80px;
@@ -15,5 +17,23 @@
 #nav-bar .header{
   float: left;
   font-size: 2em;
-  line-height: 80px;
+  line-height: 60px;
+  padding-left: 20px;
+}
+
+#nav-bar #compButton:hover:active {
+  background-color: grey;
+
+}
+#nav-bar #compButton {
+  background-color: #e0ffe0;
+  float: right;
+  width: 150px;
+  height: 65px;
+  line-height: 65px;
+  text-align: center;
+  border: 1px solid black;
+  border-radius: 5px;
+  font-size: 2em;
+  color: #1e961e;
 }

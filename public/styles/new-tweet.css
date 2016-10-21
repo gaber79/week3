@@ -7,14 +7,14 @@ section textarea {
   padding: 5px;
   width: 90%;
 }
-section h2 {
+section.new-tweet h2 {
   text-align: left;
   padding: 10px 0 0 10px;
   border-bottom: 1px solid black
 }
 section input {
  padding-left: 5px;
- 
+ margin-bottom: 5px;
  
 }
 section span.counter {
@@ -33,11 +33,11 @@ section.createdTweets {
 }
 header img.logo {
   padding-left: 5px;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   float: left;
 }
-article header h1 {
+article header h2 {
   float: left;
 }
 article header h5 {

@@ -7,78 +7,82 @@
 // Test / driver code (temporary). Eventually will get this from the server.
 $(function() {
 
-var data = [
-  {
-    "user": {
-      "name": "Newton",
-      "avatars": {
-        "small":   "https://vanillicon.com/788e533873e80d2002fa14e1412b4188_50.png",
-        "regular": "https://vanillicon.com/788e533873e80d2002fa14e1412b4188.png",
-        "large":   "https://vanillicon.com/788e533873e80d2002fa14e1412b4188_200.png"
-      },
-      "handle": "@SirIsaac"
-    },
-    "content": {
-      "text": "If I have seen further it is by standing on the shoulders of giants."
-    },
-    "created_at": 1461116232227
-  },
-  {
-    "user": {
-      "name": "Descartes",
-      "avatars": {
-        "small":   "https://vanillicon.com/7b89b0d8280b93e2ba68841436c0bebc_50.png",
-        "regular": "https://vanillicon.com/7b89b0d8280b93e2ba68841436c0bebc.png",
-        "large":   "https://vanillicon.com/7b89b0d8280b93e2ba68841436c0bebc_200.png"
-      },
-      "handle": "@rd" },
-    "content": {
-      "text": "Je pense , donc je suis"
-    },
-    "created_at": 1461113959088
-  },
-  {
-    "user": {
-      "name": "Johann von Goethe",
-      "avatars": {
-        "small":   "https://vanillicon.com/d55cf8e18b47d4baaf60c006a0de39e1_50.png",
-        "regular": "https://vanillicon.com/d55cf8e18b47d4baaf60c006a0de39e1.png",
-        "large":   "https://vanillicon.com/d55cf8e18b47d4baaf60c006a0de39e1_200.png"
-      },
-      "handle": "@johann49"
-    },
-    "content": {
-      "text": "Es ist nichts schrecklicher als eine tätige Unwissenheit."
-    },
-    "created_at": 1461113796368
+  function createTweetElement(tweet) {
+    return `
+      <section class="createdTweets">
+        <article>
+          <header><img class="logo" src="${tweet.user.avatars.regular}"><h2>${tweet.user.name}</h2><h5>${tweet.user.handle}</h5></header>
+            <p>${escape(tweet.content.text)}</p>
+          <footer>${tweet.created_at}<span class="glyphicon glyphicon-flag"></span><span class="glyphicon glyphicon-retweet"></span><span class="glyphicon glyphicon-heart"></span></footer>
+        </article>
+      </section>
+    `;
   }
-];
-
-
-function createTweetElement(tweet) {
-   
-  return `
-    <section class="createdTweets">
-      <article>
-        <header><img class="logo" src="${tweet.user.avatars.regular}"><h1>${tweet.user.name}</h1><h5>${tweet.user.handle}</h5></header>
-          <p>${escape(tweet.content.text)}</p>
-        <footer>${tweet.created_at}<span class="glyphicon glyphicon-flag"></span><span class="glyphicon glyphicon-retweet"></span><span class="glyphicon glyphicon-heart"></span></footer>
-      </article>
-    </section>
-  `;
-}
 
   function renderTweets(tweets) {
     var userList = '';
 
     for (let user of tweets) {
-      userList += createTweetElement(user);
+      userList = createTweetElement(user) + userList;
     }
-
     $('main.container').append(userList); // to add it to the page so we can make sure it's got all the right elements, classes, etc.
+
   }
 
-  renderTweets(data);
+  $(':input:submit').on('click', function(event) {
+    event.preventDefault();
+    let tooMuch = $( "[name='text']" ).serialize();
+    if (tooMuch.length > 140) {
+      alert('Too many characters. Cannot tweet more than 140 characters.')
+    } else {
+    $.ajax({
+      url: '/tweets',
+      method: 'POST',
+      data: $( "[name='text']" ).serialize(),
+    }).then(function successCb(data) {
+        // renderTweets(data);
+        window.location.reload(true);
+      }, function errorCb(err) {
+        alert('Text area is empty');
+        });
+    }
+  });
+  //render All tweets by calling a get request to /tweets and calling renderTweets(data) on what comes back
+  let tweetList = $.ajax({
+    method: 'get',
+    url: '/tweets',
+    data: $(this).serialize()
+  })
+
+  tweetList.done(function (data) {
+    renderTweets(data);
+  // console.log(data);
+  });
+
+  tweetList.fail(function () {
+    console.log("='(");
+  });
+
+  tweetList.always(function () {
+    console.log("This always happens.");
+  });
+
+
+  $('#nav-bar #compButton').on('click', function() {
+    event.preventDefault();
+    if(!$(this).hasClass('.active')) {
+      $('#nav-bar #compButton').find('.active').removeClass('.active');
+      $(this).addClass('.active');
+      $('.new-tweet').slideUp();
+      $('.new-tweet[id=' + $(this).attr('data-id') + ']').slideDown();
+      
+    } else {
+      $('.new-tweet').slideDown();
+      $('textarea').focus();
+      $('#compButton').removeClass('.active');
+      }
+  })
+
 
   function escape(str) {
   var div = document.createElement('div');
