@@ -1,28 +1,34 @@
 "use strict";
 
 const initialTweets = require("./tweets");
+const MongoClient = require("mongodb").MongoClient;
+const MONGODB_URI = "mongodb://127.0.0.1:27017/tweeter";
 
-const db = { tweets: initialTweets };
-
-const dbMethods = {
-
-  saveTweet: (data) => {
-    db.tweets.push(data);
-    return true;
-  },
-
-  getTweets: () => {
-    return db.tweets.sort(function(a, b) { return a.created_at - b.created_at });
-  }
-
-}
+console.log(`Connecting to MongoDB running at: ${MONGODB_URI}`);
 
 module.exports = {
 
   connect: (onConnect) => {
+    MongoClient.connect(MONGODB_URI, (err, db) => {
 
-    onConnect(dbMethods);
+      if (err) {
+        console.log('Could not connect! Unexpected error. Details below.');
+        throw err;
+      }
+      const dbMethods = {
 
+        saveTweet: (data) => {
+          db.collection('tweets').insertOne(data);
+          // could put in error handlers here
+        }, 
+
+        getTweets: (callback) => {
+          db.collection('tweets').find().toArray(callback);
+        }
+      }
+
+      onConnect(dbMethods);
+
+    })
   }
-
 }

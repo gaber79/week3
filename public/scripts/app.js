@@ -4,7 +4,6 @@
  * Reminder: Use (and do all your DOM work in) jQuery's document ready function
  */
 
-// Test / driver code (temporary). Eventually will get this from the server.
 $(function() {
 
   function createTweetElement(tweet) {
@@ -25,49 +24,55 @@ $(function() {
     for (let user of tweets) {
       userList = createTweetElement(user) + userList;
     }
-    $('main.container').append(userList); // to add it to the page so we can make sure it's got all the right elements, classes, etc.
+    $('main.container').append(userList); 
+    // to add it to the page so we can make sure it's got all the right elements, classes, etc.
 
   }
 
+  // post
   $(':input:submit').on('click', function(event) {
     event.preventDefault();
     let tooMuch = $( "[name='text']" ).serialize();
     if (tooMuch.length > 140) {
       alert('Too many characters. Cannot tweet more than 140 characters.')
-    } else {
-    $.ajax({
+      } else {
+      $.ajax({
+        url: '/tweets',
+        method: 'POST',
+        data: $( "[name='text']" ).serialize(),
+      }).then(function successCb(data) {
+          window.location.reload(true);
+            // loadTweets();
+          }, function errorCb(err) {
+            alert('Text area is empty');
+          });
+      }
+  });
+
+  //Get tweets. render All tweets by calling a get request to /tweets and calling renderTweets(data) on what comes back
+  function loadTweets() {
+    let tweetList = $.ajax({
+      method: 'get',
       url: '/tweets',
-      method: 'POST',
-      data: $( "[name='text']" ).serialize(),
-    }).then(function successCb(data) {
-        // renderTweets(data);
-        window.location.reload(true);
-      }, function errorCb(err) {
-        alert('Text area is empty');
-        });
-    }
-  });
-  //render All tweets by calling a get request to /tweets and calling renderTweets(data) on what comes back
-  let tweetList = $.ajax({
-    method: 'get',
-    url: '/tweets',
-    data: $(this).serialize()
-  })
+      data: $(this).serialize()
+    })
 
-  tweetList.done(function (data) {
-    renderTweets(data);
-  // console.log(data);
-  });
+    tweetList.done(function (data) {
+      renderTweets(data);
+    });
 
-  tweetList.fail(function () {
-    console.log("='(");
-  });
+    tweetList.fail(function () {
+      console.log("='(");
+    });
 
-  tweetList.always(function () {
-    console.log("This always happens.");
-  });
+    tweetList.always(function () {
+      console.log("This always happens.");
+    });
+  }
 
+  loadTweets();
 
+  // compose slider button 
   $('#nav-bar #compButton').on('click', function() {
     event.preventDefault();
     if(!$(this).hasClass('.active')) {
@@ -83,7 +88,7 @@ $(function() {
       }
   })
 
-
+  // escape security function
   function escape(str) {
   var div = document.createElement('div');
   div.appendChild(document.createTextNode(str));
